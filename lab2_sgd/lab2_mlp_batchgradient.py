@@ -76,7 +76,7 @@ def backward(learning_rate, target, net_output, layers):
         weights[i - 1] += learning_rate * dw
         
         
-
+    
 # функция обучения чередует прямой и обратный проход
 def train(x_values, target, learning_rate):
     output = feed_forward(x_values)
@@ -89,15 +89,23 @@ def predict(x_values):
 
 
 # задаем параметры обучения
-iterations = 50
+iterations = 0
 learning_rate = 0.01
-
+old = 0 # Для запоминания старой ошибки
+wOld = [[],[]] # Для запоминания старых весов
 # обучаем сеть (фактически сеть это вектор весов weights)
-for i in range(iterations):
-    train(X, y, learning_rate)
-
-    if i % 10 == 0:
-        print("На итерации: " + str(i) + ' || ' + "Средняя ошибка: " + str(np.mean(np.square(y - predict(X)))))
+while True:
+    iterations += 1
+    iterator = np.random.randint(0,99)
+    hh = X[[iterator]]
+    train(X[[iterator]], y[[iterator]], learning_rate)
+    if iterations % 1 == 0:
+        print("На итерации: " + str(iterations) + ' || ' + "Средняя ошибка: " + str(np.mean(np.square(y - predict(X)))))
+    if abs(np.mean(np.square(y - predict(X)))-old)<=learning_rate or wOld == weights: # Сравнений ошибок и весов
+    #if np.mean(np.square(y - predict(X)))-learning_rate<=0:
+        break
+    old = np.mean(np.square(y - predict(X)))# Запоминание старой ошибки
+    wOld = weights# Запоминание старых весов
 
 # считаем ошибку на обучающей выборке
 pr = predict(X)
